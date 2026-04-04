@@ -56,3 +56,36 @@ Feature engineering — the raw features are used as-is. Adding derived features
 Architecture search — only 5 hyperparameter combinations are tested. A more thorough search or techniques like Bayesian optimization could find better configurations.
 Gradient boosting comparison — for tabular data of this size, models like XGBoost or LightGBM often match or outperform neural networks with less tuning effort. Comparing against a baseline like that would give a clearer picture of how much the neural network is actually helping.
 No cross-validation — a single train/val split means results depend somewhat on which samples happened to land in which set. K-fold cross-validation would give a more reliable estimate of true performance.
+What this project does
+This project builds a neural network that predicts the price of a car based on its physical and mechanical characteristics. Given features like engine size, horsepower, brand, fuel type, and body style, the model learns to estimate a realistic market price. It covers the full machine learning pipeline from raw data to a saved, reusable model.
+
+Pipeline structure
+Cell 1 — Setup
+Installs and imports all required libraries: PyTorch for the neural network, scikit-learn for preprocessing and metrics, pandas and numpy for data handling, and matplotlib for plots.
+Cell 2 — Data loading
+Loads the car dataset directly from a URL (or generates a synthetic one as fallback). The dataset contains ~500 cars with 25+ columns covering dimensions, engine specs, fuel system, brand, and price.
+Cell 3 — Preprocessing
+Cleans and transforms the raw data into a numeric format the model can read. This includes extracting the brand name from the car name string, fixing typos in brand names, binary-encoding yes/no columns, and one-hot encoding multi-category columns like body style, drive wheel, and engine type.
+Cell 4 — Split and scale
+Divides the data into three sets: 72% training, 18% validation, and 10% test. Features and prices are standardized using StandardScaler fitted only on training data to prevent leakage. Everything is converted to PyTorch tensors.
+Cell 5 — Model architecture
+Defines CarPriceModel, a feedforward neural network with the following structure:
+Input → Linear(128) → BatchNorm → ReLU → Dropout
+      → Linear(64)  → BatchNorm → ReLU → Dropout
+      → Linear(32)  → ReLU
+      → Linear(1)   → Price output
+Batch normalization stabilizes training, dropout prevents overfitting.
+Cell 6 — Training function
+A reusable function that builds and trains a model for a given number of epochs using the Adam optimizer, MSE loss, weight decay for regularization, and a step learning rate scheduler that halves the rate every 50 epochs.
+Cell 7 — Hyperparameter search
+Trains 5 different configurations of learning rate, hidden layer size, and dropout rate for 150 epochs each. Picks the one with the lowest validation RMSE as the winner.
+Cell 8 — Full retraining + loss plot
+Retrains the best configuration for 300 epochs and plots train vs validation loss curves to confirm the model converged without overfitting.
+Cell 9 — Evaluation
+Measures final performance on both the validation and test sets using three metrics, and prints a table of 10 individual predictions side by side with their actual prices.
+Cell 10 — Scatter plot
+Plots predicted vs actual prices on the test set. Points close to the diagonal red line indicate accurate predictions.
+Cell 11 — Save and download
+Saves the trained model weights to car_model_best.pth and downloads it along with both plots to your machine.
+Cell 12 — Inference
+Reloads the saved model from disk and runs it on 5 test samples to confirm the save/load cycle works correctly and the model is ready for real-world use.
