@@ -1,4 +1,4 @@
-Car Price Prediction — Overall Project Overview
+# Car Price Prediction — Overall Project Overview
 
 What is this project?
 This is an end-to-end machine learning project that predicts the selling price of a car based on its specifications. It uses a deep neural network built with PyTorch, trained on real automotive data containing features like engine size, horsepower, brand, fuel type, body style, and dimensions.
@@ -15,6 +15,8 @@ An insurance company estimating vehicle replacement cost
 A dealership building an automated pricing suggestion tool
 A buyer trying to figure out if a car is fairly priced before negotiating
 A student learning how to apply neural networks to a real structured dataset
+
+
 
 
 What data does it use?
@@ -89,3 +91,18 @@ Cell 11 — Save and download
 Saves the trained model weights to car_model_best.pth and downloads it along with both plots to your machine.
 Cell 12 — Inference
 Reloads the saved model from disk and runs it on 5 test samples to confirm the save/load cycle works correctly and the model is ready for real-world use.
+
+
+# CIFAR-10 Image Classification with ResNet18
+
+This notebook fine-tunes a pre-trained ResNet18 model to classify images from the CIFAR-10 dataset (10 classes: planes, cars, birds, etc.).
+Here's what it does step by step:
+
+Loads CIFAR-10 — applies augmentation (flips, rotation) to training images and normalizes both splits using ImageNet statistics.
+Sets up ResNet18 — takes the ImageNet pre-trained model and swaps out its final layer to output 10 classes instead of 1000.
+Trains for 10 epochs — uses Adam optimizer with a step-based learning rate decay. Each epoch runs a full training pass and evaluates on the test set, saving the best model weights.
+Plots loss & accuracy curves — so you can visually inspect training progress and spot overfitting.
+Evaluates performance — prints a full classification report with precision, recall, and F1 per class. Overall accuracy lands at ~85.5%.
+Saves and reloads the model — exports the best weights to a .pth file and shows how to reload it for future inference.
+
+The key idea is transfer learning: rather than training from scratch, it reuses features the model already learned from millions of ImageNet images, which is why it converges quickly and performs well with minimal training time.
